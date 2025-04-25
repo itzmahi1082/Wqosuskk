@@ -7,12 +7,9 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="//niphaumeenses.net/vignette.min.js" data-zone="9247595" data-sdk="show_8969460"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-  
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   
   <style>
-    /* Apply the Roboto font from Google Fonts */
     body {
       font-family: 'Roboto', sans-serif;
       background: #121212;
@@ -60,7 +57,7 @@
       border: 1px solid #444;
       background: #222;
       color: white;
-      font-size: 16px;  /* Increased font size for better readability */
+      font-size: 16px;
     }
     button {
       background: #00aaff;
@@ -75,7 +72,7 @@
       color: #ffc107;
       font-weight: 600;
       margin-top: 15px;
-      font-size: 16px;  /* Increased font size for readability */
+      font-size: 16px;
     }
     .profile-pic {
       width: 100px;
@@ -93,7 +90,7 @@
       background: #1f1f1f;
       border: 2px solid #00aaff;
       color: #00ffcc;
-      font-size: 22px;  /* Larger font size for modal */
+      font-size: 22px;
       padding: 30px;
       border-radius: 12px;
       display: none;
@@ -106,10 +103,9 @@
       color: #f1c40f;
       font-weight: 600;
     }
-    /* For the "Coins" text instead of logo */
     .coin-text {
       font-size: 24px;
-      color: #ff5733;  /* Custom color for the "Coins" text */
+      color: #ff5733;
       font-weight: bold;
       margin-left: 5px;
     }
@@ -124,27 +120,23 @@
 <div id="home" class="tab-content active">
   <div class="card centered">
     <img src="https://via.placeholder.com/100" id="profilePic" class="profile-pic"/>
-    <h2 id="displayName" style="font-size: 24px;">Its me tisha</h2> <!-- This will be dynamically updated -->
+    <h2 id="displayName" style="font-size: 24px;">Its me tisha</h2>
     <p><strong>Balance:</strong> <span id="balance" style="font-size: 22px;">0.6</span><span class="coin-text">Coins</span></p>
   </div>
 
   <div class="card centered">
-    <h3 style="font-size: 20px;">Today's Tasks</h3> <!-- Increased font size -->
+    <h3 style="font-size: 20px;">Today's Tasks</h3>
     <p>Total Tasks: <span id="totalTasks" style="font-size: 18px;">60</span></p>
     <p>Completed: <span id="completed" style="font-size: 18px;">0</span></p>
     <p>Remaining: <span id="remaining" style="font-size: 18px;">60</span></p>
-    <p id="countdown" class="countdown"></p> <!-- Countdown Timer -->
-  </div>
-
-  <div class="card centered">
-    <!-- Additional content can be added here -->
+    <p id="countdown" class="countdown"></p>
   </div>
 </div>
 
 <!-- Earn -->
 <div id="earn" class="tab-content">
   <div class="card centered">
-    <h3 style="font-size: 20px;">Today's Tasks</h3> <!-- Increased font size -->
+    <h3 style="font-size: 20px;">Today's Tasks</h3>
     <p>Total Tasks: <span id="earnTotalTasks" style="font-size: 18px;">60</span></p>
     <p>Completed: <span id="earnCompleted" style="font-size: 18px;">0</span></p>
     <p>Remaining: <span id="earnRemaining" style="font-size: 18px;">60</span></p>
@@ -152,10 +144,21 @@
   </div>
 </div>
 
+<!-- Refer -->
+<div id="refer" class="tab-content">
+  <div class="card centered">
+    <h3 style="font-size: 20px;">Refer & Earn</h3>
+    <p>Share your referral link and earn <strong>300 Coins</strong> per friend!</p>
+    <input type="text" id="refLink" readonly value="https://t.me/Funcoin11_bot?start=yourusername">
+    <button onclick="copyRef()">Copy Link</button>
+    <p id="refMsg"></p>
+  </div>
+</div>
+
 <!-- Withdraw -->
 <div id="withdraw" class="tab-content">
   <div class="card centered">
-    <h3 style="font-size: 20px;">Withdraw</h3> <!-- Increased font size -->
+    <h3 style="font-size: 20px;">Withdraw</h3>
     <form id="withdrawForm" onsubmit="processWithdraw(event)">
       <input type="number" id="amount" placeholder="Amount (Coins)" required>
       <select id="method" required>
@@ -173,22 +176,11 @@
   </div>
 </div>
 
-<!-- Refer -->
-<div id="refer" class="tab-content">
-  <div class="card centered">
-    <h3 style="font-size: 20px;">Refer & Earn</h3> <!-- Increased font size -->
-    <p>Share your referral link and earn <strong>300 Coins</strong> per friend!</p>
-    <input type="text" id="refLink" readonly value="https://t.me/Funcoin11_bot?start=yourusername">
-    <button onclick="copyRef()">Copy Link</button>
-    <p id="refMsg"></p>
-  </div>
-</div>
-
 <!-- Profile -->
 <div id="profile" class="tab-content">
   <div class="card centered">
     <img src="https://via.placeholder.com/100" id="profilePic" class="profile-pic"/>
-    <h2 id="profileName" style="font-size: 24px;">User</h2> <!-- This will be dynamically updated -->
+    <h2 id="profileName" style="font-size: 24px;">User</h2>
     <p id="profileUsername">@username</p>
     <p><strong>Coins:</strong> <span id="points" style="font-size: 22px;">0</span><span class="coin-text">Coins</span></p>
   </div>
@@ -251,55 +243,28 @@
   }
 
   function copyRef() {
-  const copyText = document.getElementById("refLink");
-  copyText.select();
-  copyText.setSelectionRange(0, 99999);  // For mobile devices
-  document.execCommand("copy");
-  document.getElementById("refMsg").innerText = "Copied!";
-  
-  // Simulate adding 300 coins for referral
-  coins += 300;
-  updateUI();
-  
-  // Get the Telegram username
-  const user = Telegram.WebApp.initDataUnsafe.user;
-  const username = user.username || "Unknown User";  // Fallback to "Unknown User" if no username
-  
-  // Send a message via Telegram bot with username included
-  const message = `Thank you for referring a friend! You've earned 300 Coins!\nReferred by: @${username}`;
-  sendTelegramMessage(message); // Send a message via Telegram bot
-}
-
-  function processWithdraw(event) {
-    event.preventDefault();
+    const copyText = document.getElementById("refLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);  // For mobile devices
+    document.execCommand("copy");
+    document.getElementById("refMsg").innerText = "Copied!";
     
-    const withdrawAmount = parseInt(document.getElementById("amount").value);
-    const wallet = document.getElementById("wallet").value;
-    const method = document.getElementById("method").value;
-    
-    if (withdrawAmount < 10000) {
-      document.getElementById("withdrawNotice").style.display = "block";
-      return;
-    }
-    
-    if (coins < withdrawAmount) {
-      alert("You do not have enough coins for this withdrawal.");
-      return;
-    }
-    
-    // Simulate sending a message via Telegram Bot API
-    const message = `Withdrawal Request:\nAmount: ${withdrawAmount} Coins\nMethod: ${method}\nWallet: ${wallet}`;
-    sendTelegramMessage(message);
-    
-    // Subtract the coins from the user balance
-    coins -= withdrawAmount;
+    // Simulate adding 300 coins for referral
+    coins += 300;
     updateUI();
+    
+    // Get the user's Telegram username
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    const username = user.username || "Unknown User";  // Fallback if no username
+    
+    // Send a message via Telegram bot for the referral
+    const message = `Thank you for referring a friend! You've earned 300 Coins!\nReferred by: @${username}`;
+    sendTelegramMessage(message); // Send the message to Telegram bot
   }
 
-  // Send message to Telegram user using the bot API
   function sendTelegramMessage(message) {
-    const token = '7705105240:AAFCr8FrZZP7ePxWsq129hUmGNWVz8rD_uA'; // Your API token
-    const chatId = '5697990319'; // Your user ID
+    const token = '7705105240:AAFCr8FrZZP7ePxWsq129hUmGNWVz8rD_uA'; // Replace with your bot's API token
+    const chatId = '5697990319'; // Replace with your chat ID
     const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
     
     fetch(url)

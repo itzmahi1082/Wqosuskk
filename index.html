@@ -251,21 +251,24 @@
   }
 
   function copyRef() {
-    const copyText = document.getElementById("refLink");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);  // For mobile devices
-    document.execCommand("copy");
-    document.getElementById("refMsg").innerText = "Copied!";
-    
-    // Simulate adding 300 coins for referral
-    coins += 300;
-    updateUI();
-    
-    // Send a message via Telegram bot for the referral with username
-    const user = Telegram.WebApp.initDataUnsafe.user;
-    const message = `Thank you for referring a friend! You've earned 300 Coins!\nReferred by: @${user.username}`;
-    sendTelegramMessage(message); // Send a message via Telegram bot
-  }
+  const copyText = document.getElementById("refLink");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);  // For mobile devices
+  document.execCommand("copy");
+  document.getElementById("refMsg").innerText = "Copied!";
+  
+  // Simulate adding 300 coins for referral
+  coins += 300;
+  updateUI();
+  
+  // Get the Telegram username
+  const user = Telegram.WebApp.initDataUnsafe.user;
+  const username = user.username || "Unknown User";  // Fallback to "Unknown User" if no username
+  
+  // Send a message via Telegram bot with username included
+  const message = `Thank you for referring a friend! You've earned 300 Coins!\nReferred by: @${username}`;
+  sendTelegramMessage(message); // Send a message via Telegram bot
+}
 
   function processWithdraw(event) {
     event.preventDefault();

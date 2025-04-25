@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coins Reward App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="//niphaumeenses.net/vignette.min.js" data-zone="9247595" data-sdk="show_8969460"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Apply the Roboto font from Google Fonts */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #121212;
+      color: #fff;
+      margin: 0;
+      padding-bottom: 60px;
+    }
+    .tab-content { display: none; padding: 20px; }
+    .active { display: block !important; }
+    .card {
+      background: #1f1f1f;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 15px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .centered { text-align: center; }
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #1f1f1f;
+      border-top: 1px solid #333;
+      padding: 10px 0;
+    }
+    .bottom-nav div {
+      text-align: center;
+      color: #00aaff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .bottom-nav i {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    input, select, button {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #222;
+      color: white;
+      font-size: 16px;  /* Increased font size for better readability */
+    }
+    button {
+      background: #00aaff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .note-box {
+      background: #333;
+      border: 1px solid #555;
+      padding: 12px;
+      border-radius: 6px;
+      color: #ffc107;
+      font-weight: 600;
+      margin-top: 15px;
+      font-size: 16px;  /* Increased font size for readability */
+    }
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #00aaff;
+      margin: 10px auto;
+      display: block;
+    }
+    #modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1f1f1f;
+      border: 2px solid #00aaff;
+      color: #00ffcc;
+      font-size: 22px;  /* Larger font size for modal */
+      padding: 30px;
+      border-radius: 12px;
+      display: none;
+      text-align: center;
+      z-index: 1000;
+      box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+    }
+    .countdown {
+      font-size: 18px;
+      color: #f1c40f;
+      font-weight: 600;
+    }
+    /* For the "Coins" text instead of logo */
+    .coin-text {
+      font-size: 24px;
+      color: #ff5733;  /* Custom color for the "Coins" text */
+      font-weight: bold;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Modal -->
+<div id="modal">Congratulations!<br>You get 10 Coins</div>
+
+<!-- Home -->
+<div id="home" class="tab-content active">
+  <div class="card centered">
+    <img src="https://via.placeholder.com/100" id="profilePic" class="profile-pic"/>
+    <h2 id="displayName" style="font-size: 24px;">Its me tisha</h2> <!-- This will be dynamically updated -->
+    <p><strong>Balance:</strong> <span id="balance" style="font-size: 22px;">0.6</span><span class="coin-text">Coins</span></p>
+  </div>
+
+  <div class="card centered">
+    <h3 style="font-size: 20px;">Today's Tasks</h3> <!-- Increased font size -->
+    <p>Total Tasks: <span id="totalTasks" style="font-size: 18px;">60</span></p>
+    <p>Completed: <span id="completed" style="font-size: 18px;">0</span></p>
+    <p>Remaining: <span id="remaining" style="font-size: 18px;">60</span></p>
+    <p id="countdown" class="countdown"></p> <!-- Countdown Timer -->
+  </div>
+
+  <div class="card centered">
+    <!-- Additional content can be added here -->
+  </div>
+</div>
+
+<!-- Earn -->
+<div id="earn" class="tab-content">
+  <div class="card centered">
+    <h3 style="font-size: 20px;">Today's Tasks</h3> <!-- Increased font size -->
+    <p>Total Tasks: <span id="earnTotalTasks" style="font-size: 18px;">60</span></p>
+    <p>Completed: <span id="earnCompleted" style="font-size: 18px;">0</span></p>
+    <p>Remaining: <span id="earnRemaining" style="font-size: 18px;">60</span></p>
+    <button onclick="startTask()">Start Task Now</button>
+  </div>
+</div>
+
+<!-- Withdraw -->
+<div id="withdraw" class="tab-content">
+  <div class="card centered">
+    <h3 style="font-size: 20px;">Withdraw</h3> <!-- Increased font size -->
+    <form id="withdrawForm" onsubmit="processWithdraw(event)">
+      <input type="number" id="amount" placeholder="Amount (Coins)" required>
+      <select id="method" required>
+        <option value="">Select Method</option>
+        <option value="nagad">Nagad Wallet</option>
+        <option value="binance">Binance</option>
+      </select>
+      <input type="text" id="wallet" placeholder="Wallet/Number" required>
+      <button type="submit">Submit</button>
+      <p id="status"></p>
+    </form>
+    <div class="note-box" id="withdrawNotice">
+      Minimum Withdraw 10000 Coins.
+    </div>
+  </div>
+</div>
+
+<!-- Refer -->
+<div id="refer" class="tab-content">
+  <div class="card centered">
+    <h3 style="font-size: 20px;">Refer & Earn</h3> <!-- Increased font size -->
+    <p>Share your referral link and earn <strong>300 Coins</strong> per friend!</p>
+    <input type="text" id="refLink" readonly value="https://t.me/Funcoin11_bot?start=yourusername">
+    <button onclick="copyRef()">Copy Link</button>
+    <p id="refMsg"></p>
+  </div>
+</div>
+
+<!-- Profile -->
+<div id="profile" class="tab-content">
+  <div class="card centered">
+    <img src="https://via.placeholder.com/100" id="profilePic" class="profile-pic"/>
+    <h2 id="profileName" style="font-size: 24px;">User</h2> <!-- This will be dynamically updated -->
+    <p id="profileUsername">@username</p>
+    <p><strong>Coins:</strong> <span id="points" style="font-size: 22px;">0</span><span class="coin-text">Coins</span></p>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div onclick="switchTab('home')"><i class="fas fa-home"></i>Home</div>
+  <div onclick="switchTab('earn')"><i class="fas fa-play-circle"></i>Earn</div>
+  <div onclick="switchTab('withdraw')"><i class="fas fa-wallet"></i>Withdraw</div>
+  <div onclick="switchTab('refer')"><i class="fas fa-user-friends"></i>Refer</div>
+  <div onclick="switchTab('profile')"><i class="fas fa-user"></i>Profile</div>
+</div>
+
+<script>
+  let coins = parseInt(localStorage.getItem("coins")) || 0;
+  let completed = parseInt(localStorage.getItem("completed")) || 0;
+  let totalTasks = 60;
+  let remaining = totalTasks - completed;
+
+  function updateUI() {
+    document.querySelectorAll("#points").forEach(el => el.innerText = coins);
+    document.getElementById("completed").innerText = completed;
+    document.getElementById("remaining").innerText = remaining;
+    document.getElementById("earnTotalTasks").innerText = totalTasks;
+    document.getElementById("earnCompleted").innerText = completed;
+    document.getElementById("earnRemaining").innerText = remaining;
+    document.getElementById("balance").innerText = coins;
+    localStorage.setItem("coins", coins);
+    localStorage.setItem("completed", completed);
+  }
+
+  function startTask() {
+    if (remaining <= 0) {
+      alert("You have completed all tasks for today.");
+      return;
+    }
+
+    if (typeof show_8969460 === 'function') {
+      show_8969460().then(() => {
+        coins += 10;
+        completed++;
+        remaining--;
+        updateUI();
+        document.getElementById("modal").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("modal").style.display = "none";
+        }, 2000);
+      }).catch(() => {
+        alert("Ad failed. Try again.");
+      });
+    } else {
+      alert("Ad not ready yet.");
+    }
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+  }
+
+  function copyRef() {
+    const copyText = document.getElementById("refLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);  // For mobile devices
+    document.execCommand("copy");
+    document.getElementById("refMsg").innerText = "Copied!";
+    
+    // Simulate adding 300 coins for referral
+    coins += 300;
+    updateUI();
+    
+    // Send a message via Telegram bot for the referral with username
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    const message = `Thank you for referring a friend! You've earned 300 Coins!\nReferred by: @${user.username}`;
+    sendTelegramMessage(message); // Send a message via Telegram bot
+  }
+
+  function processWithdraw(event) {
+    event.preventDefault();
+    
+    const withdrawAmount = parseInt(document.getElementById("amount").value);
+    const wallet = document.getElementById("wallet").value;
+    const method = document.getElementById("method").value;
+    
+    if (withdrawAmount < 10000) {
+      document.getElementById("withdrawNotice").style.display = "block";
+      return;
+    }
+    
+    if (coins < withdrawAmount) {
+      alert("You do not have enough coins for this withdrawal.");
+      return;
+    }
+    
+    // Simulate sending a message via Telegram Bot API
+    const message = `Withdrawal Request:\nAmount: ${withdrawAmount} Coins\nMethod: ${method}\nWallet: ${wallet}`;
+    sendTelegramMessage(message);
+    
+    // Subtract the coins from the user balance
+    coins -= withdrawAmount;
+    updateUI();
+  }
+
+  // Send message to Telegram user using the bot API
+  function sendTelegramMessage(message) {
+    const token = '7705105240:AAFCr8FrZZP7ePxWsq129hUmGNWVz8rD_uA'; // Your API token
+    const chatId = '5697990319'; // Your user ID
+    const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Message sent:', data);
+        alert("Referral message has been sent.");
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  // Get user info from Telegram WebApp API
+  if (Telegram.WebApp.initDataUnsafe.user) {
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    document.getElementById("displayName").innerText = user.first_name || "User";
+    document.getElementById("profileName").innerText = user.first_name || "User";
+    document.getElementById("profileUsername").innerText = user.username ? "@" + user.username : "@username";
+    document.getElementById("profilePic").src = user.photo_url || "https://via.placeholder.com/100";
+  }
+
+  updateUI();
+</script>
+
+</body>
+</html>
